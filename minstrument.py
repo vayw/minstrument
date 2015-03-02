@@ -43,7 +43,7 @@ def get_track_data(filename, tagger):
 def set_ogg_track_data(_filename, _path, _taglist):
     cmd = ["vorbiscomment"] + ["-w"] + [_path + _filename]
     for tag in _taglist:
-        # we need quted string, so lets add qutes to tag
+        # we need quoted string, so lets add qutes to tag
         #escaped_tag = tag.replace(" ", "\ ")
         cmd.append("-t")
         cmd.append(tag)
@@ -64,10 +64,11 @@ def get_album_dir_hard(_tags_list, _filename, musicDir):
     # For beginning will get artist, album and release year
     for i in _tags_list:
         # as tags have no spec for writing let's capitalize our string
-        _our_string = i.capitalize()
+        _our_string = i.upper()
         if _our_string.startswith("ARTIST"):
             _artist = i[len("ARTIST="):]
             _tags_count+=1
+            print ("got it!")
         elif _our_string.startswith("ALBUM"):
             _album = i[len("ALBUM="):]
             _tags_count+=1
@@ -99,7 +100,7 @@ def get_album_dir_hard(_tags_list, _filename, musicDir):
                 elif _album in _album_dir:
                     # It's also good, we still pretty close
                     _folders.append((musicDir + _dir + "/" + _album_dir, 85))
-                elif _album.capitalized() in _album_dir.capitalized():
+                elif _album.upper() in _album_dir.upper():
                     # Well, what's the difference?
                     _folders.append((musicDir + _dir + "/" + _album_dir, 84))
         if _artist in _dir:
@@ -124,7 +125,7 @@ def get_album_dir_hard(_tags_list, _filename, musicDir):
                 elif _album in _album_dir:
                     # It's also good, we still pretty close
                     _folders.append((musicDir + _dir + "/" + _album_dir, 85 - _accuracy))
-                elif _album.capitalized() in _album_dir.capitalized():
+                elif _album.upper() in _album_dir.upper():
                     # Well, what's the difference?
                     _folders.append((musicDir + _dir + "/" + _album_dir, 84 - _accuracy))
 
@@ -209,6 +210,7 @@ def main():
     parser.add_argument("-i", "--indir", help="directory, containing audio files with tags")
     parser.add_argument("-o", "--outdir", help="directory, containing untagged files")
     parser.add_argument("-m", "--musicdir", help="directory with music collection")
+    parser.add_argument("--outcodec", help="output codec")
     args = parser.parse_args()
 
     # let's check config and create it if we don't have it
@@ -232,7 +234,6 @@ def main():
     tag_collection = {}
     files_list = []
 
-    # now get tags for each file in directory (if it's audio file)
     if args.indir is None:
         args.indir = "./"
     if args.musicdir is None:
@@ -240,6 +241,7 @@ def main():
     _inFileType = _config['general']['inFileType']
     _outFileType = _config['general']['outFileType']
 
+    # now get tags for each file in directory (if it's audio file)
     for i in os.listdir(args.indir):
         if i.endswith(_inFileType):
             _ipath = args.indir + "/" + i
@@ -252,8 +254,7 @@ def main():
             sys.exit("no tracks found in current dir")
         else:
             sys.exit("no tracks found in " + args.indir)
-
-    # now we can find directory with our untagged music.
+    # now we can find directory with our untagged music
     _folder = get_album_dir(files_list[-1], _inFileType, args.musicdir)
     if _folder == -1:
         _folder = get_album_dir_hard(tag_collection[files_list[-1]], files_list[-1], args.musicdir)
