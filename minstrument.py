@@ -70,13 +70,13 @@ def get_album_dir_hard(_tags_list, _filename, musicDir):
     for i in _tags_list:
         # as tags have no spec for writing let's capitalize our string
         _our_string = i.upper()
-        if _our_string.startswith("ARTIST"):
+        if _our_string.startswith("ARTIST="):
             _artist = i[len("ARTIST="):]
             _tags_count+=1
-        elif _our_string.startswith("ALBUM"):
+        elif _our_string.startswith("ALBUM="):
             _album = i[len("ALBUM="):]
             _tags_count+=1
-        elif _our_string.startswith("DATE"):
+        elif _our_string.startswith("DATE="):
             _release_date = i[len("DATE="):]
             _tags_count+=1
         # now check tags_count
@@ -233,24 +233,24 @@ def copy(_args, _cfg):
                 for i in _tag_list:
                     # as tags have no spec for writing let's capitalize our string
                     _our_string = i.upper()
-                    if _our_string.startswith("ARTIST"):
+                    if _our_string.startswith("ARTIST="):
                         _artist = i[len("ARTIST="):]
                         _tags_count+=1
-                    elif _our_string.startswith("ALBUM"):
+                    elif _our_string.startswith("ALBUM="):
                         _album = i[len("ALBUM="):]
                         _tags_count+=1
-                    elif _our_string.startswith("DATE"):
+                    elif _our_string.startswith("DATE="):
                         _release_date = i[len("DATE="):]
                         _tags_count+=1
                     # now check tags_count
                     if _tags_count == 3:
                         break
                 _dir = _artist + "/" + _release_date + " - " + _album
-                print(_args.musicdir + "/" + _dir)
-                os.makedirs(_args.musicdir + "/" + _dir)
+                print(_args.musicdir + _dir)
+                os.makedirs(_args.musicdir + _dir)
                 for i in os.listdir(_args.indir):
                     if i.endswith("." + _type):
-                        shutil.copy(i, _args.musicdir + "/" + _dir)
+                        shutil.copy(i, _args.musicdir + _dir)
         else:
             print("nothing to do")
     sys.exit()
